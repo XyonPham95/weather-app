@@ -9,15 +9,16 @@ export default class App extends Component {
     super(props);
     this.state = {
       weather: null,
-      Loading: true
+      isLoading: true
     };
     
   }
+
+  
   
   async getWeather(lat, lon) {
     try{
     const url = await fetch (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${Api_Key}`);
-    console.log(url)
     const data = await url.json();
     if (data.cod * 1 === 200) {
       this.setState({ 
@@ -25,31 +26,30 @@ export default class App extends Component {
       locationName: data.name,
       temperature: data.main.temp,
       description: data.weather[0].description,
-      Loading: false });
+      isLoading: false });
     } else throw new Error(data.message)
   } catch (error) {
     
   }
-  console.log('locationName:', this.state.locationName,
-    'temperature:', this.state.main.temp, 'description:', this.state.weather[0].description);
 }
+
 
 getCurrentCoords() {
-  navigator.geolocation.getCurrentPosition(
-    result => {
-      this.getWeather(result.coords.longitude, result.coords.latitude);
-    },
-  );
+  navigator.geolocation.getCurrentPosition(result => { this.fetchWeather(result.coords.longitude, result.coords.latitude) }, error => { console.log(error) })
 }
 
-  componentDidMount() {
-    this.getCurrentCoords();
+
+componentDidMount(){
+  this.getCurrentCoords();
+}
+
+
+
   
-  }
   
 
   render() {
-    return this.state.Loading? (<h1 className="text-center text-danger my-5">Loading</h1>):(
+    return this.state.isLoading? (<h1 className="text-center text-danger my-5">Loading</h1>):(
       <div className="container-fluid text-white my-auto">
         <div className="container mx-auto my-4 py-4">
           <div className="row justify-content-center text-center">
