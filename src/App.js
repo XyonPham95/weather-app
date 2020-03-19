@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-const Api_Key = "17e2e4150b5515a8d1cf99b2029d09c5";
+const Api_Key = ;
 
 export default class App extends Component {
   constructor(props) {
@@ -17,9 +17,12 @@ export default class App extends Component {
   
   
   async getWeather(lat, lon) {
+    console.log("first call");
     try{
+      console.log("eee");
     const url = await fetch (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${Api_Key}`);
     const data = await url.json();
+    console.log("getWeather");
     if (data.cod * 1 === 200) {
       this.setState({ 
       weather: data,
@@ -33,20 +36,16 @@ export default class App extends Component {
   }
 }
 
-
 getCurrentCoords() {
-  navigator.geolocation.getCurrentPosition(result => { this.fetchWeather(result.coords.longitude, result.coords.latitude) }, error => { console.log(error) })
+  console.log("im in getCurrentCoords ")
+  navigator.geolocation.getCurrentPosition(result =>  {
+    console.log("dd",result.coords.latitude,result.coords.longitude)
+    this.getWeather(result.coords.latitude, result.coords.longitude)} )
 }
-
 
 componentDidMount(){
   this.getCurrentCoords();
 }
-
-
-
-  
-  
 
   render() {
     return this.state.isLoading? (<h1 className="text-center text-danger my-5">Loading</h1>):(
